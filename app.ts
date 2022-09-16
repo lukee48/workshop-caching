@@ -7,7 +7,7 @@ const app = express();
 const port = 3000;
 
 
-app.get('/', cache(30), async (req: Request, res: Response) => {
+app.get('/', async (req: Request, res: Response) => {
 
     const commission = await getCommission();
     const sharePrices = await getSharePrices();
