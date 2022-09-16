@@ -1,15 +1,20 @@
 import express, { Request, Response, NextFunction } from 'express';
-import {getProducts} from "./product-client";
+import {getCommission} from "./Clients/commission-client";
+import {getSharePrices} from "./Clients/shareprice-client";
+import {cache} from "./Middleware/cache";
 
 const app = express();
 const port = 3000;
 
 
-app.get('/', async (req: Request, res: Response) => {
+app.get('/', cache(30), async (req: Request, res: Response) => {
 
-    const products = await getProducts();
+    const commission = await getCommission();
+    const sharePrices = await getSharePrices();
 
-    res.send(products);
+    res.send({
+        commission, sharePrices
+    });
 
 });
 

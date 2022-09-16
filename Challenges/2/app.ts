@@ -1,8 +1,11 @@
 import express, { Request, Response, NextFunction } from 'express';
-import {getProducts} from "./product-client";
+import {getCommission} from "./Clients/commission-client";
+import {getSharePrices} from "./Clients/shareprice-client";
+import {cache} from "./Middleware/cache";
 
 const NodeCache = require( "node-cache" );
 const myCache = new NodeCache();
+
 
 const app = express();
 const port = 3000;
@@ -10,15 +13,20 @@ const port = 3000;
 
 app.get('/', async (req: Request, res: Response) => {
 
-    let products = myCache.get( "products" );
+    let commission = myCache.get( "commission" );
 
-    if ( products == undefined ){
-        products = await getProducts();
+    if ( commission == undefined ){
+        commission = await getCommission();
 
-        myCache.set( "products", products, 1000 );
+        myCache.set( "commission", commission, 30 );
     }
 
-    res.send(products);
+    const sharePrices = await getSharePrices();
+
+    res.send({
+        commission, sharePrices
+    });
+
 });
 
 app.listen(port, () => {
